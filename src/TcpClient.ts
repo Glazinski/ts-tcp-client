@@ -2,19 +2,47 @@ import net from 'net';
 
 export class TcpClient {
     private socket: net.Socket;
+    private isSocketConnected: boolean;
 
-    constructor(private port: number, private addr: string) {}
+    constructor(private port: number, private addr: string) {
+        this.isSocketConnected = false;
+    }
 
-    connect = (): void => {
-        // this.socket.connect({
-        //     port: this.port,
-        //     host: this.addr,
-        //     family: 4,
-        // });
-        this.socket.connect(this.port, this.addr, () => {
-            console.log('CONNECTED');
-            this.socket.write('HEY');
-        });
+    private addListeners = (): void => {
+        if (this.socket) {
+            this.socket.on('close', () => {
+                console.log('Connection closed');
+            });
+
+            this.socket.on('connect', () => {
+                console.log('Client connected');
+            });
+
+            this.socket.on('ready', () => {
+                console.log('Socket is ready to be used');
+            });
+
+            this.socket.on('end', () => {
+                console.log('Server stopped the connection');
+            });
+
+            this.socket.on('error', (error) => {
+                console.log('Something went wrong', error);
+            });
+        }
+    };
+
+    private connect = (): void => {
+        if (!this.isSocketConnected) {
+            console.log('Conecting...');
+            try {
+                this.socket.connect(this.port, this.addr);
+            } catch (error) {
+                console.log('Connection error', error);
+            }
+        } else {
+            console.log('Socket is already connected');
+        }
     };
 
     send = (buffer: string): void => {
@@ -23,21 +51,21 @@ export class TcpClient {
         }
     };
 
-    // handleData = (chunk: Buffer): void => {
-    //     try {
-    //         console.log('chunk', chunk);
-    //     } catch (error: unknown) {
-    //         console.log('data error', error);
-    //     }
-    // };
+    close = (): void => {
+        if (this.socket) {
+            this.socket.destroy();
+        }
+    };
 
-    init = (): void => {
+    createSocket = (): void => {
         if (!this.socket) {
             this.socket = new net.Socket();
-            this.socket.on('data', (data: Buffer) => {
-                console.log(data);
-            });
-            // this.socket.on('data', this.handleData);
         }
+    };
+
+    init = (): void => {
+        this.createSocket();
+        this.addListeners();
+        this.connect();
     };
 }
