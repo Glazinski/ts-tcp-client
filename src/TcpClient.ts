@@ -26,7 +26,7 @@ export class TcpClient {
                 console.log('Server stopped the connection');
             });
 
-            this.socket.on('error', (error) => {
+            this.socket.on('error', (error: Error) => {
                 console.log('Something went wrong', error);
             });
         }
@@ -47,13 +47,15 @@ export class TcpClient {
 
     send = (buffer: string): void => {
         if (this.socket) {
-            this.socket.write(buffer);
+            // this.socket.write(buffer);
+            this.socket.write(Buffer.from(buffer));
         }
     };
 
     close = (): void => {
         if (this.socket) {
             this.socket.destroy();
+            this.socket = null;
         }
     };
 

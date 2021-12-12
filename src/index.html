@@ -6,10 +6,31 @@
         <link rel="stylesheet" href="index.css" />
     </head>
     <body>
-        <div>
-            <input class="file-input" type="file" />
-            <button class="send-btn">send</button>
-        </div>
+        <section class="server-section">
+            <h2>Podaj port i adres serwera</h2>
+            <div style="display: flex">
+                <div class="form-group" style="margin-right: 10px">
+                    <label for="port">Port</label>
+                    <input id="port" class="port-input" type="text" />
+                </div>
+                <div class="form-group">
+                    <label for="address">Adres</label>
+                    <input
+                        id="address"
+                        class="form-group address-input"
+                        type="text"
+                    />
+                </div>
+            </div>
+        </section>
+        <section class="form-section">
+            <h2>Wygeneruj losowy obiekt JSON:</h2>
+            <button class="btn generate-btn">generuj</button>
+        </section>
+        <section class="size-section"></section>
+        <section class="result-section">
+            <h3>Obiekt:</h3>
+        </section>
         <script>
             require('../dist/renderer.js');
         </script>

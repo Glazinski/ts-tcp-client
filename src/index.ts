@@ -1,46 +1,60 @@
 import path from 'path';
 import { app, BrowserWindow, ipcMain } from 'electron';
 import { TcpClient } from './TcpClient';
+import { TcpRequest } from './types';
 
 if (require('electron-squirrel-startup')) {
     app.quit();
 }
 
-const createWindow = (): void => {
-    const mainWindow = new BrowserWindow({
-        height: 600,
-        width: 800,
-        webPreferences: {
-            preload: path.join(__dirname, 'preload.js'),
-            nodeIntegration: true,
-            contextIsolation: false,
-        },
-    });
+class App {
+    private createWindow = (): void => {
+        const mainWindow = new BrowserWindow({
+            height: 600,
+            width: 800,
+            webPreferences: {
+                preload: path.join(__dirname, 'preload.js'),
+                nodeIntegration: true,
+                contextIsolation: false,
+            },
+        });
 
-    mainWindow.loadFile(path.join(__dirname, '../src/index.html'));
-    mainWindow.webContents.openDevTools();
-};
+        mainWindow.loadFile(path.join(__dirname, '../src/index.html'));
+        mainWindow.webContents.openDevTools();
+    };
 
-app.on('ready', () => {
-    createWindow();
+    private setListeners = (): void => {
+        app.on('ready', () => {
+            this.createWindow();
+            ipcMain.on('send-json', (_, payload: TcpRequest) => {
+                const { port, address } = payload;
+                const tcpClient1 = new TcpClient(port, address);
+                tcpClient1.init();
+                tcpClient1.send(payload.size);
 
-    ipcMain.on('send-file', (e, payload: string) => {
-        console.log(payload);
-        const tcpClient = new TcpClient(23456, '127.0.0.1');
-        tcpClient.init();
+                const tcpClient2 = new TcpClient(port, address);
+                tcpClient2.init();
+                tcpClient2.send(payload.serializedData);
+            });
+        });
 
-        tcpClient.send(payload);
-    });
-});
+        app.on('window-all-closed', () => {
+            if (process.platform !== 'darwin') {
+                app.quit();
+            }
+        });
 
-app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-        app.quit();
-    }
-});
+        app.on('activate', () => {
+            if (BrowserWindow.getAllWindows().length === 0) {
+                this.createWindow();
+            }
+        });
+    };
 
-app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-        createWindow();
-    }
-});
+    init = (): void => {
+        this.setListeners();
+    };
+}
+
+const myApp = new App();
+myApp.init();
