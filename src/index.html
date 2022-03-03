@@ -1,38 +1,37 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8" />
-        <title>Hello World!</title>
-        <link rel="stylesheet" href="index.css" />
-    </head>
-    <body>
-        <section class="server-section">
-            <h2>Podaj port i adres serwera</h2>
-            <div style="display: flex">
-                <div class="form-group" style="margin-right: 10px">
-                    <label for="port">Port</label>
-                    <input id="port" class="port-input" type="text" />
-                </div>
-                <div class="form-group">
-                    <label for="address">Adres</label>
-                    <input
-                        id="address"
-                        class="form-group address-input"
-                        type="text"
-                    />
-                </div>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>TCP Random JSON object generator</title>
+    <link rel="stylesheet" href="index.css" />
+</head>
+
+<body>
+    <section class="server-section">
+        <h2>Specify port and server address</h2>
+        <div style="display: flex">
+            <div class="form-group" style="margin-right: 10px">
+                <label for="port">Port</label>
+                <input id="port" class="port-input" type="text" />
             </div>
-        </section>
-        <section class="form-section">
-            <h2>Wygeneruj losowy obiekt JSON:</h2>
-            <button class="btn generate-btn">generuj</button>
-        </section>
-        <section class="size-section"></section>
-        <section class="result-section">
-            <h3>Obiekt:</h3>
-        </section>
-        <script>
-            require('../dist/renderer.js');
-        </script>
-    </body>
+            <div class="form-group">
+                <label for="address">Address</label>
+                <input id="address" class="form-group address-input" type="text" />
+            </div>
+        </div>
+    </section>
+    <section class="form-section">
+        <h2>Generate random JSON object:</h2>
+        <button class="btn generate-btn">generate</button>
+    </section>
+    <section class="size-section"></section>
+    <section class="result-section">
+        <h3>JSON Object:</h3>
+    </section>
+    <script>
+        require('../dist/renderer.js');
+    </script>
+</body>
+
 </html>
